@@ -1,0 +1,17 @@
+# robots.txt for Word Unscrambler & Wordle Companion Suite
+# Optimized for maximum organic exposure on Google Search
+
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /assets/
+
+# Prevent bots from wasting crawl budget on system internal configurations
+Disallow: /metadata.json
+Disallow: /tsconfig.json
+Disallow: /vite.config.ts
+Disallow: /package.json
+Disallow: /package-lock.json
+
+# Pointer to your dynamic XML Sitemap file
+Sitemap: https://www.letterstowords.co/sitemap.xml

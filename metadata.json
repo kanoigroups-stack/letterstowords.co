@@ -1,0 +1,6 @@
+{
+  "name": "Letters to Words",
+  "description": "A fast, easy, and powerful word unscrambler, anagram solver, dictionary lookup, and Wordle helper.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
