@@ -125,12 +125,12 @@ export default function DictionaryTab({
         </p>
       </div>
 
-      {/* Search Input Card */}
+      {/* Search Input Card - RESPONSIVE FIX: stacked on mobile, side-by-side on md+ */}
       <div className="bg-white border border-[#c3c6d7] rounded-xl p-6 shadow-sm max-w-2xl mx-auto space-y-4">
         <label className="block text-sm font-semibold text-[#131b2e]">
           Search Word
         </label>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <input
             className="flex-grow h-12 px-4 rounded-lg border border-[#c3c6d7] bg-[#faf8ff] text-[#131b2e] font-semibold text-base focus:outline-none focus:ring-2 focus:ring-[#004ac6] transition-all"
             placeholder="Type any word (e.g. AMBITION, CRUCIBLE, APPLE)"
@@ -141,7 +141,7 @@ export default function DictionaryTab({
           />
           <button
             onClick={() => handleSearch()}
-            className="px-6 h-12 bg-[#004ac6] hover:bg-[#2563eb] text-white font-bold rounded-lg transition-colors flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
+            className="px-6 h-12 bg-[#004ac6] hover:bg-[#2563eb] text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95 shrink-0"
           >
             <Search size={18} />
             <span>Search</span>
@@ -193,7 +193,7 @@ export default function DictionaryTab({
             </div>
 
             {/* Quick action buttons linking this to other tabs */}
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => onExploreAnagrams(searchedWord)}
                 className="px-3.5 py-2 hover:bg-[#004ac6] border border-[#c3c6d7] hover:border-transparent text-[#004ac6] hover:text-white font-medium text-xs rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
