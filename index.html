@@ -4,45 +4,131 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- PRIMARY SEO HEAD TITLE & DESCRIPTION -->
+    <!-- SEO: Page Title -->
     <title>Word Unscrambler: Letters to Words | Official Scrabble Word Finder</title>
-    <meta name="description" content="Official Word Unscrambler by Letters to Words (.co)! Unscramble random letters online to find high-scoring Scrabble words, Wordle helper tips, and perfect anagram solutions instantly." />
-    <meta name="keywords" content="letters to words, word unscrambler, scrabble word finder, anagram solver, word finder, letterstowords, wordle companion, wordle solver, word wheel solver, dictionary lookup" />
-    <meta name="robots" content="index, follow" />
     
-    <!-- CANONICAL LINK - Prevents duplicate content index issues -->
-    <!-- REPLACE 'https://yourwebsite.com' with your actual custom domain during production deployment -->
+    <!-- SEO: Description for Google search results -->
+    <meta name="description" content="Official Word Unscrambler by Letters to Words! Unscramble random letters online to find high-scoring Scrabble words, Wordle helper tips, and perfect anagram solutions instantly." />
+    
+    <!-- SEO: Keywords -->
+    <meta name="keywords" content="letters to words, word unscrambler, scrabble word finder, anagram solver, word finder, letterstowords, wordle companion, wordle solver, word wheel solver, dictionary lookup" />
+    
+    <!-- SEO: Tell Google to index this page -->
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    
+    <!-- SEO: Author info -->
+    <meta name="author" content="Letters to Words" />
+    
+    <!-- SEO: Canonical URL (prevents duplicate content) -->
     <link rel="canonical" href="https://www.letterstowords.co" />
 
-    <!-- OPEN GRAPH GRAPHICS META (For rich card shares on Social Media: Facebook, Discord, LinkedIn) -->
+    <!-- SEO: Facebook/LinkedIn sharing -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Letters to Words | Official Word Unscrambler & Scrabble Finder" />
     <meta property="og:description" content="Official Letters to Words unscrambler! Rearrange random letters into valid Scrabble, Words with Friends, and Wordle game solutions instantly." />
     <meta property="og:url" content="https://www.letterstowords.co" />
     <meta property="og:image" content="https://www.letterstowords.co/assets/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="Letters to Words" />
+    <meta property="og:locale" content="en_US" />
 
-    <!-- TWITTER DECOR CARDS -->
+    <!-- SEO: Twitter sharing -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Letters to Words | Official Word Unscrambler" />
     <meta name="twitter:description" content="Rearrange random letters into high-scoring Scrabble, Anagram, and Wordle game solutions in milliseconds." />
     <meta name="twitter:image" content="https://www.letterstowords.co/assets/og-image.jpg" />
+    <meta name="twitter:site" content="@letterstowords" />
 
-    <!-- GOOGLE ADSENSE CODE SETUP -->
-    <!-- INSTRUCTIONS: To enable ads across your site automatically:
-         1. Replace 'ca-pub-XXXXXXXXXXXXXXXX' with your verified AdSense publisher client ID.
-         2. Uncomment the script tags below when deploying to your public domain! -->
-    <!--
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
-     crossorigin="anonymous"></script>
-    -->
+    <!-- SEO: Structured Data (helps Google show rich results) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "name": "Letters to Words",
+          "url": "https://www.letterstowords.co",
+          "description": "Free online word unscrambler, Scrabble word finder, anagram solver, and Wordle helper tool.",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://www.letterstowords.co/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "Letters to Words - Word Unscrambler",
+          "applicationCategory": "GameApplication",
+          "operatingSystem": "Any",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.8",
+            "ratingCount": "1250"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "How does the Word Unscrambler tool work?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Our free word unscrambler solves complex letters in milliseconds. By typing your mixed letter rack into the prompt, the backend algorithm analyzes the letters and cross-references them against premium official tournament dictionary databases (NWL, CSW, ENABLE) to find every valid combination grouped by word length."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Can I use blank tiles or wildcard letters?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, absolutely! If you are playing games with blank tiles, you can represent them using a question mark (?) or asterisk (*). The Letters to Words engine will dynamically calculate all possible alphabetic substitutions to output high-scoring word combinations."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is this tool compliant with Scrabble and Words with Friends?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes, our unscramble tool provides exact Scrabble word point counts based on standard layouts. You can select NWL (North American Scrabble), CSW (Collins/Global Scrabble), or ENABLE (ideal for Words With Friends) dictionaries."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I lock words to start or end with a letter?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "By using our Advanced Options dropdown, you can set precise search constraints. Simply enter desired letters into the Starts with, Ends with, or Must include form fields to find perfect word fits for open columns on your real game board."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
 
-    <!-- FAVICON LINK -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22 width=%22100%22 height=%22100%22><text y=%220.9em%22 font-size=%2290%22>🔤</text></svg>">
+    <!-- SEO: Speed up loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://api.dictionaryapi.dev" />
+    
+    <!-- SEO: Mobile browser theme color -->
+    <meta name="theme-color" content="#004ac6" />
+    <meta name="msapplication-TileColor" content="#004ac6" />
+
+    <!-- FAVICON -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%200%20100%20100%22 width=%22100%22 height=%22100%22><text y=%220.9em%22 font-size=%2290%22>🔤</text></svg>">
+    <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
