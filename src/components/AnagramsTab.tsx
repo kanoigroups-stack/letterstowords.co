@@ -49,12 +49,12 @@ export default function AnagramsTab({ initialWord = '', onWordClick }: AnagramsT
         </p>
       </div>
 
-      {/* Input panel card */}
+      {/* Input panel card - RESPONSIVE FIX: stacked on mobile, side-by-side on md+ */}
       <div className="bg-white border border-[#c3c6d7] rounded-xl p-6 shadow-sm max-w-2xl mx-auto space-y-4">
         <label className="block text-sm font-semibold text-[#131b2e]">
           Enter Word / Letters
         </label>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <input
             className="flex-grow h-12 px-4 rounded-lg border border-[#c3c6d7] bg-[#faf8ff] text-[#131b2e] font-bold text-base uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-[#004ac6] transition-all"
             placeholder="Type word (e.g. CINEMA, LISTEN, ELVIS)"
@@ -65,7 +65,7 @@ export default function AnagramsTab({ initialWord = '', onWordClick }: AnagramsT
           />
           <button
             onClick={() => handleSearch()}
-            className="px-6 h-12 bg-[#004ac6] hover:bg-[#2563eb] text-white font-bold rounded-lg transition-colors flex items-center gap-2 cursor-pointer shadow-sm active:scale-95"
+            className="px-6 h-12 bg-[#004ac6] hover:bg-[#2563eb] text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95 shrink-0"
           >
             <Search size={18} />
             <span>Find Anagrams</span>
