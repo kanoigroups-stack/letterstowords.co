@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Primary Homepage - Word Unscrambler -->
+  
+  <!-- Homepage - Word Unscrambler -->
   <url>
     <loc>https://www.letterstowords.co/</loc>
-    <lastmod>2026-05-30</lastmod>
+    <lastmod>2026-05-31</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -11,40 +12,40 @@
   <!-- Dictionary Lookups -->
   <url>
     <loc>https://www.letterstowords.co/#dictionary</loc>
-    <lastmod>2026-05-30</lastmod>
+    <lastmod>2026-05-31</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
   
   <!-- Anagram Permutations -->
   <url>
     <loc>https://www.letterstowords.co/#anagrams</loc>
-    <lastmod>2026-05-30</lastmod>
+    <lastmod>2026-05-31</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
   </url>
 
   <!-- Word Wheel Solvers -->
   <url>
     <loc>https://www.letterstowords.co/#descrambler</loc>
-    <lastmod>2026-05-30</lastmod>
+    <lastmod>2026-05-31</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
 
-  <!-- Interactive Wordle Board Helpers -->
+  <!-- Wordle Board Helpers -->
   <url>
     <loc>https://www.letterstowords.co/#wordle</loc>
-    <lastmod>2026-05-30</lastmod>
+    <lastmod>2026-05-31</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
 
-  <!-- Vocabulary Training Scrambles -->
+  <!-- Vocabulary Training -->
   <url>
     <loc>https://www.letterstowords.co/#random</loc>
-    <lastmod>2026-05-30</lastmod>
+    <lastmod>2026-05-31</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.6</priority>
+    <priority>0.7</priority>
   </url>
 </urlset>
