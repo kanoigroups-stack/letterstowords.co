@@ -45,7 +45,8 @@ export default function AdUnit({
         <ins
           className="adsbygoogle"
           style={{ display: 'block', minWidth: '250px', ...style }}
-          data-ad-client="ca-pub-1234567890123456" // REPLACE with real client ID or use auto-ads in index.html
+          data-ad-client=<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5183526163868215"
+     crossorigin="anonymous"></script>
           data-ad-slot={slot}
           data-ad-format={format}
           data-full-width-responsive={responsive ? 'true' : 'false'}
