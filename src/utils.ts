@@ -134,14 +134,10 @@ export function solveAnagram(inputWord: string): string[] {
 }
 
 // Wordle Solver Assistant
-// Filters 5-letter words based on:
-// green: array of 5 characters, with letters in correct positions (or empty/space)
-// yellow: array of letters that are in the word but NOT in these spots, or string of letters in the word
-// gray: string of letters known NOT to be in the word
 export function solveWordle(
-  green: string[], // length 5, e.g. ["A", "", "", "L", ""]
-  yellow: string[][], // index 0-4 list of letters that cannot be in this index but are in the word
-  gray: string // string of wrong letters
+  green: string[],
+  yellow: string[][], // index 0-4: letters that cannot be in this position but ARE in the word
+  gray: string
 ): string[] {
   const fiveLetterWords = COMMON_WORDS.filter(w => w.length === 5);
   const graySet = new Set(gray.toUpperCase().split(''));
@@ -153,25 +149,26 @@ export function solveWordle(
   return fiveLetterWords.filter(word => {
     // Check Green positions
     for (let i = 0; i < 5; i++) {
-      if (green[i] && word[i] !== green[i].toUpperCase()) {
+      if (green[i] && green[i].trim() !== '' && word[i] !== green[i].toUpperCase()) {
         return false;
       }
     }
 
-    // Check Gray list: (except if the letter is green in some position, which is a common duplicate letter situation)
+    // Check Gray list (exclude letters not in word)
     for (let i = 0; i < 5; i++) {
       const letter = word[i];
       if (graySet.has(letter)) {
-        // If it's a green letter we allow it (Wordle with double letters)
+        // Allow if this letter is green in this exact position
         if (green[i] === letter) continue;
-        // Check if this letter is actively a green position anywhere
-        if (green.includes(letter)) continue;
+        // Allow if this letter is green somewhere else (duplicate letter case)
+        const isGreenElsewhere = green.some((g, idx) => g === letter && word[idx] === letter);
+        if (isGreenElsewhere) continue;
         return false;
       }
     }
 
     // Check Yellow constraints:
-    // 1. Must contain all yellow letters
+    // 1. Must contain all yellow letters somewhere in the word
     for (const yellowLetter of mustHaveYellow) {
       if (!word.includes(yellowLetter)) {
         return false;
