@@ -55,7 +55,7 @@ export function solveUnscramble(
 
   // Combine letters in hand with board constraints to ensure matching words are checkable
   // For example if you have "PLE" and "Starts with A", the pool of tiles has A + P + L + E.
-  const poolLetters = cleanInput.replace(/[^A-Z]/g, '') + startsWith + endsWith + mustInclude;
+  const poolLetters = cleanInput.replace(/[^A-Z]/g, '');
   const rackCounts = countChars(poolLetters);
 
   const matchedWords: string[] = [];
