@@ -177,11 +177,12 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
   const keyboardRows = [
     ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
     ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
-    ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'BACKSPACE'],
+    ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'BACKSPACE']
   ];
 
   return (
     <div className="space-y-8 animate-fade-in font-sans">
+      
       {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="text-4xl font-extrabold tracking-tight text-[#131b2e] leading-snug">
@@ -196,6 +197,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
       <div className="flex justify-center">
         <div className="bg-[#f2f3ff] p-1.5 rounded-full inline-flex border border-[#e2e7ff]">
           <button
+            type="button"
             onClick={() => setMode('solver')}
             className={`px-5 py-2 text-xs font-semibold rounded-full select-none transition-all cursor-pointer ${
               mode === 'solver'
@@ -206,6 +208,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
             Wordle Solver BOT Helper
           </button>
           <button
+            type="button"
             onClick={() => setMode('game')}
             className={`px-5 py-2 text-xs font-semibold rounded-full select-none transition-all cursor-pointer ${
               mode === 'game'
@@ -221,13 +224,12 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
       {mode === 'solver' ? (
         /* SOLVER HELPER PANEL */
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          
           {/* Controls Input column */}
           <div className="bg-white border border-[#c3c6d7] rounded-xl p-6 shadow-sm space-y-6">
             <div className="flex items-center space-x-2 text-[#004ac6] border-b border-dashed border-[#e2e8f0] pb-3">
               <Sparkles size={18} />
-              <h2 className="text-base font-bold text-[#131b2e]">
-                State Filter Parameters
-              </h2>
+              <h2 className="text-base font-bold text-[#131b2e]">State Filter Parameters</h2>
             </div>
 
             {/* Green Positions */}
@@ -310,6 +312,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
             </div>
 
             <button
+              type="button"
               onClick={() => {
                 setGreen(['', '', '', '', '']);
                 setYellowLetters('');
@@ -336,6 +339,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
               <div className="max-h-[400px] overflow-y-auto border border-[#e2e8f0] rounded-lg p-3 bg-slate-50 flex flex-wrap gap-2.5">
                 {solverSuggestions.map((word) => (
                   <button
+                    type="button"
                     key={word}
                     onClick={() => onWordClick(word)}
                     className="bg-white hover:bg-[#e2e7ff] text-[#131b2e] hover:text-[#004ac6] border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-bold tracking-wider font-mono cursor-pointer transition-colors"
@@ -346,17 +350,21 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
               </div>
             )}
           </div>
+
         </div>
       ) : (
         /* PLAY INTERACTIVE WORDLE GAME PANEL */
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          
           {/* Main game board grid */}
           <div className="lg:col-span-2 bg-white border border-[#c3c6d7] rounded-xl p-6 shadow-sm space-y-6 flex flex-col items-center">
+            
             <div className="w-full flex justify-between items-center border-b border-slate-100 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-[#505f76] flex items-center gap-1">
                 <Trophy size={14} className="text-[#004ac6]" /> Play Hard Scrabble Wordle
               </span>
               <button
+                type="button"
                 onClick={startNewGame}
                 className="text-xs font-bold text-[#004ac6] hover:underline cursor-pointer"
               >
@@ -396,6 +404,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
                   </span>
                 </p>
                 <button
+                  type="button"
                   onClick={startNewGame}
                   className="mt-2 bg-[#004ac6] text-white font-bold text-xs px-4 py-2 rounded-lg hover:bg-[#2563eb] cursor-pointer"
                 >
@@ -466,6 +475,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
                       key === 'ENTER' || key === 'BACKSPACE';
                     return (
                       <button
+                        type="button"
                         key={key}
                         onClick={() => handleGameKeyPress(key)}
                         className={`h-11 font-bold rounded-md select-none text-[10px] md:text-xs cursor-pointer flex items-center justify-center transition-all ${
@@ -480,6 +490,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
                 </div>
               ))}
             </div>
+
           </div>
 
           {/* AI Companion live Helper Sidebar panel */}
@@ -508,6 +519,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
                 <div className="max-h-[260px] overflow-y-auto border border-[#e2e8f0] rounded-lg p-2.5 bg-slate-50 flex flex-wrap gap-2">
                   {currentLiveSuggestions.map((word) => (
                     <button
+                      type="button"
                       key={word}
                       onClick={() => {
                         onWordClick(word);
@@ -524,6 +536,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
               </div>
             )}
           </div>
+
         </div>
       )}
 
@@ -560,6 +573,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
           </p>
         </div>
       </div>
+
     </div>
   );
 }
