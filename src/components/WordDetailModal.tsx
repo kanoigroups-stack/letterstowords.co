@@ -20,6 +20,16 @@ export default function WordDetailModal({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [points, setPoints] = useState<number>(0);
 
+  // FIX #7: Lock body scroll when modal opens, unlock when it closes
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
+
   useEffect(() => {
     if (!word) return;
     
@@ -156,7 +166,7 @@ export default function WordDetailModal({
         <div className="bg-slate-50 px-6 py-3 border-t border-slate-100 text-center">
           <button
             onClick={onClose}
-            className="text-xs text-slate-500 hover:text-[#004ac6] font-semibold cursor-pointer"
+            className="text-xs text-slate-500 hover:text-[#004ac6] font-semibold cursor-pointer bg-transparent border-none"
           >
             Close Details
           </button>
