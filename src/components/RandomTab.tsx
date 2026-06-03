@@ -69,26 +69,22 @@ export default function RandomTab({ onWordClick, onExploreLetters }: RandomTabPr
     startNewScramble();
   }, []);
 
+  // FIXED: Only correct answer counts as correct, everything else is wrong
   const handleGuessSubmit = (e: FormEvent) => {
-  e.preventDefault();
-  const cleanGuess = userGuess.toUpperCase().trim();
-  if (!cleanGuess) return;
+    e.preventDefault();
+    const cleanGuess = userGuess.toUpperCase().trim();
+    if (!cleanGuess) return;
 
-  if (cleanGuess === scrambleTarget) {
-    setGameFeedback({ status: 'CORRECT', text: '🎉 Awesome! That is the correct word!' });
-    setGameStreak(prev => prev + 1);
-    // Auto-start new scramble after 2 seconds
-    setTimeout(() => startNewScramble(), 2000);
-  } else {
-    setGameFeedback({ 
-      status: 'WRONG', 
-      text: '❌ Not quite! Review the letters and try again.' 
-    });
-  }
-};
-      setGameStreak(gameStreak + 1);
+    if (cleanGuess === scrambleTarget) {
+      setGameFeedback({ status: 'CORRECT', text: '🎉 Awesome! That is the correct word!' });
+      setGameStreak(prev => prev + 1);
+      // Auto-start new scramble after 2 seconds
+      setTimeout(() => startNewScramble(), 2000);
     } else {
-      setGameFeedback({ status: 'WRONG', text: '❌ Not quite! Review the letters and try again.' });
+      setGameFeedback({ 
+        status: 'WRONG', 
+        text: '❌ Not quite! Review the letters and try again.' 
+      });
     }
   };
 
@@ -163,7 +159,7 @@ export default function RandomTab({ onWordClick, onExploreLetters }: RandomTabPr
             <div className="pt-2">
               <button
                 onClick={() => onExploreLetters(randomWord)}
-                className="text-xs text-[#004ac6] hover:underline font-bold"
+                className="text-xs text-[#004ac6] hover:underline font-bold bg-transparent border-none cursor-pointer"
               >
                 Explore subsets of "{randomWord}" on Home tab →
               </button>
@@ -240,7 +236,7 @@ export default function RandomTab({ onWordClick, onExploreLetters }: RandomTabPr
                 <button
                   type="button"
                   onClick={() => setShowHint(true)}
-                  className="text-[#004ac6] hover:underline flex items-center gap-1 cursor-pointer"
+                  className="text-[#004ac6] hover:underline flex items-center gap-1 cursor-pointer bg-transparent border-none"
                 >
                   <Lightbulb size={13} />
                   <span>Reveal Hint</span>
@@ -248,14 +244,14 @@ export default function RandomTab({ onWordClick, onExploreLetters }: RandomTabPr
                 <button
                   type="button"
                   onClick={handleReveal}
-                  className="text-slate-500 hover:underline cursor-pointer"
+                  className="text-slate-500 hover:underline cursor-pointer bg-transparent border-none"
                 >
                   Give Up / Reveal
                 </button>
                 <button
                   type="button"
                   onClick={startNewScramble}
-                  className="text-[#004ac6] hover:underline flex items-center gap-1 cursor-pointer"
+                  className="text-[#004ac6] hover:underline flex items-center gap-1 cursor-pointer bg-transparent border-none"
                 >
                   <Play size={13} />
                   <span>Next Scramble →</span>
