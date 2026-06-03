@@ -101,7 +101,6 @@ export default function App() {
   };
 
   // FIX #11: Use 'contents' instead of 'block' to prevent layout issues
-  // 'contents' makes the wrapper div invisible to layout while still keeping children in DOM for SEO
   const showTab = (tab: TabType) => activeTab === tab ? 'contents' : 'hidden';
 
   return (
@@ -201,6 +200,7 @@ export default function App() {
                 </h3>
               </div>
               <button
+                type="button"
                 onClick={() => setUtilityDialog({ isOpen: false, title: '', content: '' })}
                 className="text-white/80 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
               >
@@ -214,6 +214,7 @@ export default function App() {
             </div>
             <div className="bg-slate-50 px-5 py-3 border-t border-slate-100 text-right">
               <button
+                type="button"
                 onClick={() => setUtilityDialog({ isOpen: false, title: '', content: '' })}
                 className="bg-[#004ac6] hover:bg-[#2563eb] text-white text-xs font-bold px-4 py-2 rounded-lg cursor-pointer transition-colors"
               >
