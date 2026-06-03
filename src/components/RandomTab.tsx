@@ -70,19 +70,22 @@ export default function RandomTab({ onWordClick, onExploreLetters }: RandomTabPr
   }, []);
 
   const handleGuessSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const cleanGuess = userGuess.toUpperCase().trim();
-    if (!cleanGuess) return;
+  e.preventDefault();
+  const cleanGuess = userGuess.toUpperCase().trim();
+  if (!cleanGuess) return;
 
-    if (cleanGuess === scrambleTarget) {
-      setGameFeedback({ status: 'CORRECT', text: '🎉 Awesome! That is the correct word!' });
-      setGameStreak(gameStreak + 1);
-    } else if (COMMON_WORDS.includes(cleanGuess) && cleanGuess.length === scrambleTarget.length) {
-      // Valid word but not target
-      setGameFeedback({
-        status: 'CORRECT',
-        text: `💡 Hey! "${cleanGuess}" is a valid word but not the specific one scrambled. Good vocabulary!`,
-      });
+  if (cleanGuess === scrambleTarget) {
+    setGameFeedback({ status: 'CORRECT', text: '🎉 Awesome! That is the correct word!' });
+    setGameStreak(prev => prev + 1);
+    // Auto-start new scramble after 2 seconds
+    setTimeout(() => startNewScramble(), 2000);
+  } else {
+    setGameFeedback({ 
+      status: 'WRONG', 
+      text: '❌ Not quite! Review the letters and try again.' 
+    });
+  }
+};
       setGameStreak(gameStreak + 1);
     } else {
       setGameFeedback({ status: 'WRONG', text: '❌ Not quite! Review the letters and try again.' });
