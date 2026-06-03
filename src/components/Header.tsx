@@ -61,6 +61,7 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
       <nav className="bg-white border-b border-[#e2e8f0] fixed top-0 w-full z-50 transition-colors duration-100">
         <div className="flex justify-between items-center h-16 px-6 max-w-7xl mx-auto w-full">
           <button
+            type="button"
             onClick={() => handleTabClick('home')}
             className="font-sans text-2xl font-black tracking-tight text-[#131b2e] active:scale-95 transition-transform duration-100 cursor-pointer flex items-center gap-1.5"
             id="appLogo"
@@ -79,6 +80,7 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
               const isActive = activeTab === tab.id;
               return (
                 <button
+                  type="button"
                   key={tab.id}
                   onClick={() => handleTabClick(tab.id)}
                   className={`relative font-sans text-sm font-medium transition-colors duration-150 h-full px-3 flex items-center cursor-pointer ${
@@ -96,6 +98,7 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
 
           {/* Mobile Hamburguer Toggle */}
           <button
+            type="button"
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden text-[#004ac6] p-2 rounded-full hover:bg-[#f2f3ff] transition-colors duration-100 active:scale-95 cursor-pointer"
             id="mobileMenuBtn"
@@ -117,6 +120,7 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
                 const isActive = activeTab === tab.id;
                 return (
                   <button
+                    type="button"
                     key={tab.id}
                     onClick={() => handleTabClick(tab.id)}
                     className={`w-full text-left py-2 px-3 rounded-md text-sm font-medium transition-colors duration-100 cursor-pointer ${
