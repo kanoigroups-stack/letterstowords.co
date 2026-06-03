@@ -1,5 +1,5 @@
 import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { TabType } from '../types';
 
 interface HeaderProps {
@@ -9,6 +9,7 @@ interface HeaderProps {
 
 export default function Header({ activeTab, setActiveTab }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const tabs: { id: TabType; label: string }[] = [
     { id: 'home', label: 'Home' },
@@ -24,6 +25,36 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
     setIsOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // FIX #9: Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  // FIX #9: Close mobile menu on Escape key press
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+    }
+
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen]);
 
   return (
     <>
@@ -68,6 +99,8 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden text-[#004ac6] p-2 rounded-full hover:bg-[#f2f3ff] transition-colors duration-100 active:scale-95 cursor-pointer"
             id="mobileMenuBtn"
+            aria-label="Toggle menu"
+            aria-expanded={isOpen}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -75,7 +108,10 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
 
         {/* Mobile Navigation Drawer */}
         {isOpen && (
-          <div className="md:hidden bg-white border-b border-[#e2e8f0] py-4 px-6 animate-fade-in">
+          <div
+            ref={menuRef}
+            className="md:hidden bg-white border-b border-[#e2e8f0] py-4 px-6 animate-fade-in shadow-lg"
+          >
             <div className="flex flex-col space-y-3">
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.id;
@@ -98,7 +134,6 @@ export default function Header({ activeTab, setActiveTab }: HeaderProps) {
           </div>
         )}
       </nav>
-      {/* Spacer to prevent header content overlay */}
       <div className="h-16" />
     </>
   );
