@@ -54,57 +54,57 @@ export default function DictionaryTab({
   }, [initialWord]);
 
   const handleSearch = (wordToSearch?: string) => {
-    const targetWord = (wordToSearch || searchTerm).toUpperCase().trim();
-    if (!targetWord) return;
+  const targetWord = (wordToSearch || searchTerm).toUpperCase().trim();
+  if (!targetWord) return;
 
-    setSearchedWord(targetWord);
-    setIsLoading(true);
-    setErrorMsg('');
-    setLocalDefinition(null);
-    setApiResult(null);
+  setSearchedWord(targetWord);
+  setIsLoading(true);
+  setErrorMsg('');
+  setLocalDefinition(null);
+  setApiResult(null);
+  setActiveTab('local'); // Start with local while loading
 
-    // 1. Local Lookup
-    const localRes = getLocalDefinition(targetWord);
-    const pts = getScrabblePoints(targetWord);
-    if (localRes) {
-      setLocalDefinition({
-        definition: localRes.definition,
-        partOfSpeech: localRes.partOfSpeech,
-        points: pts,
-      });
-    } else {
-      // Find in common list
-      const inList = COMMON_WORDS.includes(targetWord);
-      setLocalDefinition({
-        definition: inList
-          ? `A valid Scrabble word '${targetWord}' scoring ${pts} points inside standard wordlist.`
-          : `'${targetWord}' is not in our highly compressed local list, but might still be a valid English word! Try the online lookup below.`,
-        partOfSpeech: inList ? 'Noun/Word' : 'Unverified',
-        points: pts,
-      });
-    }
+  // 1. Local Lookup
+  const localRes = getLocalDefinition(targetWord);
+  const pts = getScrabblePoints(targetWord);
+  
+  if (localRes) {
+    setLocalDefinition({
+      definition: localRes.definition,
+      partOfSpeech: localRes.partOfSpeech,
+      points: pts,
+    });
+  } else {
+    const inList = COMMON_WORDS.includes(targetWord);
+    setLocalDefinition({
+      definition: inList
+        ? `A valid Scrabble word '${targetWord}' scoring ${pts} points inside standard wordlist.`
+        : `'${targetWord}' is not in our highly compressed local list, but might still be a valid English word! Try the online lookup below.`,
+      partOfSpeech: inList ? 'Noun/Word' : 'Unverified',
+      points: pts,
+    });
+  }
 
-    // 2. Fetch from External Public Dictionary API
-    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${targetWord.toLowerCase()}`)
-      .then((res) => {
-        if (res.ok) return res.json();
-        throw new Error('Not found');
-      })
-      .then((data) => {
-        if (data && data[0]) {
-          setApiResult(data[0]);
-          setActiveTab('api'); // Prefer external details if successfully returned!
-        } else {
-          setActiveTab('local');
-        }
-      })
-      .catch(() => {
-        setActiveTab('local'); // Fallback to local if dictionary API fails or offline
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
+  // 2. Fetch from External Public Dictionary API
+  fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${targetWord.toLowerCase()}`)
+    .then((res) => {
+      if (!res.ok) throw new Error('Not found');
+      return res.json();
+    })
+    .then((data) => {
+      if (data && data[0]) {
+        setApiResult(data[0]);
+        setActiveTab('api'); // Switch to API only on success
+      }
+    })
+    .catch(() => {
+      // Keep local tab active, API result stays null
+      setActiveTab('local');
+    })
+    .finally(() => {
+      setIsLoading(false);
+    });
+};
 
   const handleCopy = () => {
     navigator.clipboard.writeText(searchedWord);
