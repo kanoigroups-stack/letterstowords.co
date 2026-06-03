@@ -100,9 +100,9 @@ export default function App() {
     setActiveTab('home');
   };
 
-  // SEO FIX: Show/hide tabs with CSS instead of removing from DOM
-  // This lets Google see ALL tab content, not just the active one
-  const showTab = (tab: TabType) => activeTab === tab ? 'block' : 'hidden';
+  // FIX #11: Use 'contents' instead of 'block' to prevent layout issues
+  // 'contents' makes the wrapper div invisible to layout while still keeping children in DOM for SEO
+  const showTab = (tab: TabType) => activeTab === tab ? 'contents' : 'hidden';
 
   return (
     <div className="bg-[#faf8ff] text-[#131b2e] font-sans min-h-screen flex flex-col transition-colors duration-100">
