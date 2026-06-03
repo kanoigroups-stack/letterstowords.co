@@ -54,57 +54,56 @@ export default function DictionaryTab({
   }, [initialWord]);
 
   const handleSearch = (wordToSearch?: string) => {
-  const targetWord = (wordToSearch || searchTerm).toUpperCase().trim();
-  if (!targetWord) return;
+    const targetWord = (wordToSearch || searchTerm).toUpperCase().trim();
+    if (!targetWord) return;
 
-  setSearchedWord(targetWord);
-  setIsLoading(true);
-  setErrorMsg('');
-  setLocalDefinition(null);
-  setApiResult(null);
-  setActiveTab('local'); // Start with local while loading
+    setSearchedWord(targetWord);
+    setIsLoading(true);
+    setErrorMsg('');
+    setLocalDefinition(null);
+    setApiResult(null);
+    setActiveTab('local'); // Start with local while loading
 
-  // 1. Local Lookup
-  const localRes = getLocalDefinition(targetWord);
-  const pts = getScrabblePoints(targetWord);
-  
-  if (localRes) {
-    setLocalDefinition({
-      definition: localRes.definition,
-      partOfSpeech: localRes.partOfSpeech,
-      points: pts,
-    });
-  } else {
-    const inList = COMMON_WORDS.includes(targetWord);
-    setLocalDefinition({
-      definition: inList
-        ? `A valid Scrabble word '${targetWord}' scoring ${pts} points inside standard wordlist.`
-        : `'${targetWord}' is not in our highly compressed local list, but might still be a valid English word! Try the online lookup below.`,
-      partOfSpeech: inList ? 'Noun/Word' : 'Unverified',
-      points: pts,
-    });
-  }
+    // 1. Local Lookup
+    const localRes = getLocalDefinition(targetWord);
+    const pts = getScrabblePoints(targetWord);
+    
+    if (localRes) {
+      setLocalDefinition({
+        definition: localRes.definition,
+        partOfSpeech: localRes.partOfSpeech,
+        points: pts,
+      });
+    } else {
+      const inList = COMMON_WORDS.includes(targetWord);
+      setLocalDefinition({
+        definition: inList
+          ? `A valid Scrabble word '${targetWord}' scoring ${pts} points inside standard wordlist.`
+          : `'${targetWord}' is not in our highly compressed local list, but might still be a valid English word! Try the online lookup below.`,
+        partOfSpeech: inList ? 'Noun/Word' : 'Unverified',
+        points: pts,
+      });
+    }
 
-  // 2. Fetch from External Public Dictionary API
-  fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${targetWord.toLowerCase()}`)
-    .then((res) => {
-      if (!res.ok) throw new Error('Not found');
-      return res.json();
-    })
-    .then((data) => {
-      if (data && data[0]) {
-        setApiResult(data[0]);
-        setActiveTab('api'); // Switch to API only on success
-      }
-    })
-    .catch(() => {
-      // Keep local tab active, API result stays null
-      setActiveTab('local');
-    })
-    .finally(() => {
-      setIsLoading(false);
-    });
-};
+    // 2. Fetch from External Public Dictionary API
+    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${targetWord.toLowerCase()}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Not found');
+        return res.json();
+      })
+      .then((data) => {
+        if (data && data[0]) {
+          setApiResult(data[0]);
+          setActiveTab('api'); // Switch to API only on success
+        }
+      })
+      .catch(() => {
+        setActiveTab('local'); // Fallback to local if dictionary API fails or offline
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(searchedWord);
@@ -125,7 +124,7 @@ export default function DictionaryTab({
         </p>
       </div>
 
-      {/* Search Input Card - RESPONSIVE FIX: stacked on mobile, side-by-side on md+ */}
+      {/* Search Input Card */}
       <div className="bg-white border border-[#c3c6d7] rounded-xl p-6 shadow-sm max-w-2xl mx-auto space-y-4">
         <label className="block text-sm font-semibold text-[#131b2e]">
           Search Word
@@ -140,6 +139,7 @@ export default function DictionaryTab({
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
           <button
+            type="button"
             onClick={() => handleSearch()}
             className="px-6 h-12 bg-[#004ac6] hover:bg-[#2563eb] text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-95 shrink-0"
           >
@@ -169,6 +169,7 @@ export default function DictionaryTab({
                   {searchedWord}
                 </h2>
                 <button
+                  type="button"
                   onClick={handleCopy}
                   className="text-slate-400 hover:text-[#004ac6] p-1.5 rounded hover:bg-slate-200/50 transition-colors cursor-pointer"
                   title="Copy Word"
@@ -195,6 +196,7 @@ export default function DictionaryTab({
             {/* Quick action buttons linking this to other tabs */}
             <div className="flex flex-wrap gap-2">
               <button
+                type="button"
                 onClick={() => onExploreAnagrams(searchedWord)}
                 className="px-3.5 py-2 hover:bg-[#004ac6] border border-[#c3c6d7] hover:border-transparent text-[#004ac6] hover:text-white font-medium text-xs rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
               >
@@ -202,6 +204,7 @@ export default function DictionaryTab({
                 <span>Search Anagrams</span>
               </button>
               <button
+                type="button"
                 onClick={() => onExploreLetters(searchedWord)}
                 className="px-3.5 py-2 hover:bg-[#004ac6] border border-[#c3c6d7] hover:border-transparent text-[#004ac6] hover:text-white font-medium text-xs rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer"
               >
@@ -215,6 +218,7 @@ export default function DictionaryTab({
           {apiResult && (
             <div className="flex border-b border-[#e2e8f0]">
               <button
+                type="button"
                 onClick={() => setActiveTab('api')}
                 className={`flex-1 py-3 text-center text-sm font-semibold transition-colors cursor-pointer border-b-2 ${
                   activeTab === 'api'
@@ -225,6 +229,7 @@ export default function DictionaryTab({
                 Detailed Definition (Online)
               </button>
               <button
+                type="button"
                 onClick={() => setActiveTab('local')}
                 className={`flex-1 py-3 text-center text-sm font-semibold transition-colors cursor-pointer border-b-2 ${
                   activeTab === 'local'
