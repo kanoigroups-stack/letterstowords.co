@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ToggleLeft, ToggleRight, Sparkles, AlertCircle, HelpCircle, Trophy, BookOpen } from 'lucide-react';
+import { Sparkles, AlertCircle, HelpCircle, Trophy, BookOpen } from 'lucide-react';
 import { COMMON_WORDS } from '../data/words';
 import { solveWordle } from '../utils';
 
@@ -13,6 +13,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
   // SOLVER STATES
   const [green, setGreen] = useState<string[]>(['', '', '', '', '']);
   const [yellowLetters, setYellowLetters] = useState<string>('');
+  const [yellowPositions, setYellowPositions] = useState<string[]>(['', '', '', '', '']);
   const [grayLetters, setGrayLetters] = useState<string>('');
   const [solverSuggestions, setSolverSuggestions] = useState<string[]>([]);
 
@@ -23,32 +24,41 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
   const [gameStatus, setGameStatus] = useState<'IN_PROGRESS' | 'WON' | 'LOST'>('IN_PROGRESS');
   const [gameError, setGameError] = useState<string>('');
 
-  // 1. SOLVER LOGIC HANDLER
+  // 1. SOLVER LOGIC HANDLER - FIXED
   useEffect(() => {
-    // Generate simple yellow matrix (overall inclusion check)
-    // Create matrix where yellowLetters can be anywhere
+    // Build proper yellow matrix: track which letters are yellow and where they CANNOT go
     const yellowMatrix: string[][] = Array(5).fill(null).map(() => []);
 
-    // Filter
-    const results = solveWordle(
-      green,
-      yellowMatrix,
-      grayLetters
-    );
-
-    // Apply overall inclusion check for yellowLetters input
-    const cleanYellow = yellowLetters.toUpperCase().replace(/[^A-Z]/g, '').split('');
-    const finalResults = results.filter(word => {
-      return cleanYellow.every(letter => word.includes(letter));
+    // Parse yellow positions input (e.g., "L" in position 2 means L cannot be at index 2)
+    yellowPositions.forEach((letters, position) => {
+      const cleanLetters = letters.toUpperCase().replace(/[^A-Z]/g, '').split('');
+      yellowMatrix[position] = cleanLetters;
     });
 
-    setSolverSuggestions(finalResults.slice(0, 150)); // cap list
-  }, [green, yellowLetters, grayLetters]);
+    // Also handle the general yellow letters input (letters known to be in word but position unknown)
+    const generalYellow = yellowLetters.toUpperCase().replace(/[^A-Z]/g, '').split('');
+    generalYellow.forEach((letter) => {
+      // Add to all positions as "cannot be here" if not already specified
+      for (let i = 0; i < 5; i++) {
+        if (!yellowMatrix[i].includes(letter)) {
+          yellowMatrix[i].push(letter);
+        }
+      }
+    });
+
+    const results = solveWordle(green, yellowMatrix, grayLetters);
+
+    // Ensure general yellow letters are all present in results
+    const finalResults = results.filter((word) => {
+      return generalYellow.every((letter) => word.includes(letter));
+    });
+
+    setSolverSuggestions(finalResults.slice(0, 150));
+  }, [green, yellowLetters, yellowPositions, grayLetters]);
 
   // 2. GAME SETUP HANDLER
   const startNewGame = () => {
-    // Pick standard 5 letter word
-    const fileFive = COMMON_WORDS.filter(w => w.length === 5);
+    const fileFive = COMMON_WORDS.filter((w) => w.length === 5);
     const randomWord = fileFive[Math.floor(Math.random() * fileFive.length)];
     setGameSolution(randomWord);
     setGameGuesses([]);
@@ -66,10 +76,11 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
   // Compute live solver suggestions based on played game guesses!
   const getLiveGameSuggestions = (): string[] => {
     if (!gameSolution || gameGuesses.length === 0) {
-      return COMMON_WORDS.filter(w => w.length === 5).slice(0, 50);
+      return COMMON_WORDS.filter((w) => w.length === 5).slice(0, 50);
     }
 
     const localGreen = ['', '', '', '', ''];
+    const localYellowMatrix: string[][] = Array(5).fill(null).map(() => []);
     const localYellowMatches = new Set<string>();
     const localGray = new Set<string>();
 
@@ -80,6 +91,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
           localGreen[i] = char;
         } else if (gameSolution.includes(char)) {
           localYellowMatches.add(char);
+          localYellowMatrix[i].push(char);
         } else {
           localGray.add(char);
         }
@@ -88,13 +100,15 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
 
     const results = solveWordle(
       localGreen,
-      Array(5).fill(null).map(() => []),
+      localYellowMatrix,
       Array.from(localGray).join('')
     );
 
-    return results.filter(word => {
-      return Array.from(localYellowMatches).every(letter => word.includes(letter));
-    }).slice(0, 30);
+    return results
+      .filter((word) => {
+        return Array.from(localYellowMatches).every((letter) => word.includes(letter));
+      })
+      .slice(0, 30);
   };
 
   const currentLiveSuggestions = getLiveGameSuggestions();
@@ -109,7 +123,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
         setGameError('Word must be exactly 5 letters!');
         return;
       }
-      
+
       const cleanGuess = currentInput.toUpperCase();
       if (!COMMON_WORDS.includes(cleanGuess)) {
         setGameError('Word not found in Scrabble list!');
@@ -163,12 +177,11 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
   const keyboardRows = [
     ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
     ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'],
-    ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'BACKSPACE']
+    ['ENTER', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'BACKSPACE'],
   ];
 
   return (
     <div className="space-y-8 animate-fade-in font-sans">
-      
       {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="text-4xl font-extrabold tracking-tight text-[#131b2e] leading-snug">
@@ -208,12 +221,13 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
       {mode === 'solver' ? (
         /* SOLVER HELPER PANEL */
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-          
           {/* Controls Input column */}
           <div className="bg-white border border-[#c3c6d7] rounded-xl p-6 shadow-sm space-y-6">
             <div className="flex items-center space-x-2 text-[#004ac6] border-b border-dashed border-[#e2e8f0] pb-3">
               <Sparkles size={18} />
-              <h2 className="text-base font-bold text-[#131b2e]">State Filter Parameters</h2>
+              <h2 className="text-base font-bold text-[#131b2e]">
+                State Filter Parameters
+              </h2>
             </div>
 
             {/* Green Positions */}
@@ -239,7 +253,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
               </div>
             </div>
 
-            {/* Yellow Letters */}
+            {/* Yellow Letters (General) */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#505f76] mb-1">
                 Yellow Letters (Present in word but wrong spot)
@@ -253,6 +267,34 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
               />
             </div>
 
+            {/* Yellow Positions - NEW: Position-specific yellow exclusions */}
+            <div className="space-y-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-[#505f76]">
+                Yellow Letter Positions (Letters known to be wrong at specific spots)
+              </label>
+              <div className="grid grid-cols-5 gap-2">
+                {yellowPositions.map((val, idx) => (
+                  <div key={idx} className="text-center">
+                    <input
+                      className="w-full h-11 text-center rounded-lg border border-[#c3c6d7] bg-[#faf8ff] text-yellow-600 font-bold text-sm uppercase focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+                      type="text"
+                      maxLength={5}
+                      placeholder={`Pos ${idx + 1}`}
+                      value={val}
+                      onChange={(e) => {
+                        const updated = [...yellowPositions];
+                        updated[idx] = e.target.value.toUpperCase();
+                        setYellowPositions(updated);
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <p className="text-[10px] text-slate-400">
+                Enter letters that are yellow at each position (e.g., if L is yellow in spot 2, type "L" in position 2)
+              </p>
+            </div>
+
             {/* Excluded letters */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-[#505f76] mb-1">
@@ -263,7 +305,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
                 type="text"
                 placeholder="Type wrong tiles (e.g. S, R, P)"
                 value={grayLetters}
-                onChange={(e) => setGrayLetters(e.target.toUpperCase())}
+                onChange={(e) => setGrayLetters(e.target.value.toUpperCase())}
               />
             </div>
 
@@ -271,6 +313,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
               onClick={() => {
                 setGreen(['', '', '', '', '']);
                 setYellowLetters('');
+                setYellowPositions(['', '', '', '', '']);
                 setGrayLetters('');
               }}
               className="text-xs font-semibold text-slate-500 hover:text-[#004ac6] underline cursor-pointer"
@@ -286,9 +329,11 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
             </h3>
 
             {solverSuggestions.length === 0 ? (
-              <p className="text-xs text-slate-500 italic py-6 text-center">No words match these criteria in Scrabble Wordle list.</p>
+              <p className="text-xs text-slate-500 italic py-6 text-center">
+                No words match these criteria in Scrabble Wordle list.
+              </p>
             ) : (
-              <div className="max-h-[300px] overflow-y-auto border border-[#e2e8f0] rounded-lg p-3 bg-slate-50 flex flex-wrap gap-2.5">
+              <div className="max-h-[400px] overflow-y-auto border border-[#e2e8f0] rounded-lg p-3 bg-slate-50 flex flex-wrap gap-2.5">
                 {solverSuggestions.map((word) => (
                   <button
                     key={word}
@@ -301,15 +346,12 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
               </div>
             )}
           </div>
-
         </div>
       ) : (
         /* PLAY INTERACTIVE WORDLE GAME PANEL */
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          
           {/* Main game board grid */}
           <div className="lg:col-span-2 bg-white border border-[#c3c6d7] rounded-xl p-6 shadow-sm space-y-6 flex flex-col items-center">
-            
             <div className="w-full flex justify-between items-center border-b border-slate-100 pb-3">
               <span className="text-xs font-bold uppercase tracking-wider text-[#505f76] flex items-center gap-1">
                 <Trophy size={14} className="text-[#004ac6]" /> Play Hard Scrabble Wordle
@@ -332,13 +374,17 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
 
             {/* Game over states */}
             {gameStatus !== 'IN_PROGRESS' && (
-              <div className={`w-full p-4 rounded-xl text-center space-y-2 border ${
-                gameStatus === 'WON' 
-                  ? 'bg-[#eeefff] border-[#004ac6] text-[#004ac6]' 
-                  : 'bg-orange-50 border-orange-200 text-orange-800'
-              }`}>
+              <div
+                className={`w-full p-4 rounded-xl text-center space-y-2 border ${
+                  gameStatus === 'WON'
+                    ? 'bg-[#eeefff] border-[#004ac6] text-[#004ac6]'
+                    : 'bg-orange-50 border-orange-200 text-orange-800'
+                }`}
+              >
                 <h3 className="font-extrabold text-sm uppercase font-mono">
-                  {gameStatus === 'WON' ? '🎉 Congratulations You Won!' : '💀 Game Over!'}
+                  {gameStatus === 'WON'
+                    ? '🎉 Congratulations You Won!'
+                    : '💀 Game Over!'}
                 </h3>
                 <p className="text-xs">
                   The correct solution was:{' '}
@@ -360,44 +406,55 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
 
             {/* Board Row Squares */}
             <div className="space-y-2 my-2 font-mono">
-              {Array(6).fill(null).map((_, rowIdx) => {
-                const guess = gameGuesses[rowIdx];
-                const isCurrent = rowIdx === gameGuesses.length;
+              {Array(6)
+                .fill(null)
+                .map((_, rowIdx) => {
+                  const guess = gameGuesses[rowIdx];
+                  const isCurrent = rowIdx === gameGuesses.length;
 
-                return (
-                  <div key={rowIdx} className="grid grid-cols-5 gap-2 w-[260px] md:w-[310px]">
-                    {Array(5).fill(null).map((_, colIdx) => {
-                      let text = '';
-                      let bgClass = 'bg-white border-slate-300 text-[#131b2e]';
+                  return (
+                    <div
+                      key={rowIdx}
+                      className="grid grid-cols-5 gap-2 w-[260px] md:w-[310px]"
+                    >
+                      {Array(5)
+                        .fill(null)
+                        .map((_, colIdx) => {
+                          let text = '';
+                          let bgClass =
+                            'bg-white border-slate-300 text-[#131b2e]';
 
-                      if (guess) {
-                        text = guess[colIdx];
-                        if (gameSolution[colIdx] === text) {
-                          bgClass = 'bg-green-600 border-green-600 text-white';
-                        } else if (gameSolution.includes(text)) {
-                          bgClass = 'bg-yellow-500 border-yellow-500 text-white';
-                        } else {
-                          bgClass = 'bg-slate-500 border-slate-500 text-white';
-                        }
-                      } else if (isCurrent) {
-                        text = currentInput[colIdx] || '';
-                        bgClass = text 
-                          ? 'bg-white border-[#004ac6] text-[#131b2e] ring-1 ring-[#004ac6]' 
-                          : 'bg-white border-slate-300';
-                      }
+                          if (guess) {
+                            text = guess[colIdx];
+                            if (gameSolution[colIdx] === text) {
+                              bgClass =
+                                'bg-green-600 border-green-600 text-white';
+                            } else if (gameSolution.includes(text)) {
+                              bgClass =
+                                'bg-yellow-500 border-yellow-500 text-white';
+                            } else {
+                              bgClass =
+                                'bg-slate-500 border-slate-500 text-white';
+                            }
+                          } else if (isCurrent) {
+                            text = currentInput[colIdx] || '';
+                            bgClass = text
+                              ? 'bg-white border-[#004ac6] text-[#131b2e] ring-1 ring-[#004ac6]'
+                              : 'bg-white border-slate-300';
+                          }
 
-                      return (
-                        <div
-                          key={colIdx}
-                          className={`w-11 h-11 md:w-13 md:h-13 border-2 rounded-lg flex items-center justify-center text-lg md:text-xl font-extrabold ${bgClass} select-none transition-all duration-300`}
-                        >
-                          {text}
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
+                          return (
+                            <div
+                              key={colIdx}
+                              className={`w-11 h-11 md:w-13 md:h-13 border-2 rounded-lg flex items-center justify-center text-lg md:text-xl font-extrabold ${bgClass} select-none transition-all duration-300`}
+                            >
+                              {text}
+                            </div>
+                          );
+                        })}
+                    </div>
+                  );
+                })}
             </div>
 
             {/* Virtual Onboard keyboard */}
@@ -405,7 +462,8 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
               {keyboardRows.map((row, rowIdx) => (
                 <div key={rowIdx} className="flex justify-center gap-1">
                   {row.map((key) => {
-                    const isLongKey = key === 'ENTER' || key === 'BACKSPACE';
+                    const isLongKey =
+                      key === 'ENTER' || key === 'BACKSPACE';
                     return (
                       <button
                         key={key}
@@ -413,7 +471,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
                         className={`h-11 font-bold rounded-md select-none text-[10px] md:text-xs cursor-pointer flex items-center justify-center transition-all ${
                           isLongKey ? 'px-2.5 md:px-4' : 'w-7 md:w-9'
                         } ${getLetterKeyStyle(key)}`}
-                        style={{ minHeight: '44px' }} // satisfy mobile touch target limit
+                        style={{ minHeight: '44px' }}
                       >
                         {key === 'BACKSPACE' ? 'DEL' : key}
                       </button>
@@ -422,7 +480,6 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
                 </div>
               ))}
             </div>
-
           </div>
 
           {/* AI Companion live Helper Sidebar panel */}
@@ -433,13 +490,16 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
                 Live Game Solver Feed
               </h2>
             </div>
-            
+
             <p className="text-xs text-slate-400 font-medium">
-              This analyzer dynamically calculates valid matching answers from our Scrabble list based on your played attempts above!
+              This analyzer dynamically calculates valid matching answers from
+              our Scrabble list based on your played attempts above!
             </p>
 
             {currentLiveSuggestions.length === 0 ? (
-              <p className="text-xs text-slate-500 italic py-4">No recommendations. Try starting a game first!</p>
+              <p className="text-xs text-slate-500 italic py-4">
+                No recommendations. Try starting a game first!
+              </p>
             ) : (
               <div className="space-y-2">
                 <p className="text-[10px] uppercase font-bold tracking-widest text-[#505f76]">
@@ -450,7 +510,7 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
                     <button
                       key={word}
                       onClick={() => {
-                        onWordClick(word); // opens detail popup
+                        onWordClick(word);
                       }}
                       className="bg-white hover:bg-[#eeefff] text-xs text-[#131b2e] hover:text-[#004ac6] border border-slate-200 font-semibold font-mono tracking-wider px-2 py-1.5 rounded-md cursor-pointer transition-colors"
                     >
@@ -464,7 +524,6 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
               </div>
             )}
           </div>
-
         </div>
       )}
 
@@ -478,7 +537,11 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
             </h2>
           </div>
           <p className="text-sm text-[#434655] leading-relaxed">
-            By analyzing Green markers (locking letters in exact coordinates), Yellow markers (which mean the letter is present in the word, but currently placed in a wrong position), and Gray tiles (eliminating letters entirely from the solver grid), the engine narrows down 5-letter options in secondary-level queries.
+            By analyzing Green markers (locking letters in exact coordinates),
+            Yellow markers (which mean the letter is present in the word, but
+            currently placed in a wrong position), and Gray tiles (eliminating
+            letters entirely from the solver grid), the engine narrows down
+            5-letter options in secondary-level queries.
           </p>
         </div>
 
@@ -490,11 +553,13 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
             </h2>
           </div>
           <p className="text-sm text-[#434655] leading-relaxed">
-            Toggle between the generic solver and playing independent training games. When playing live, the integrated "Solver Feed" evaluates played attempts silently, showing how you can solve the board in fewer steps!
+            Toggle between the generic solver and playing independent training
+            games. When playing live, the integrated "Solver Feed" evaluates
+            played attempts silently, showing how you can solve the board in fewer
+            steps!
           </p>
         </div>
       </div>
-
     </div>
   );
 }
