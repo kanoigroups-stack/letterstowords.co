@@ -19,6 +19,7 @@ export default function Footer({ onSelectTab, onShowUtilityDialog }: FooterProps
           </span>
           <nav className="flex flex-wrap gap-x-4 gap-y-2">
             <button
+              type="button"
               className="text-[#505f76] hover:text-[#004ac6] hover:underline transition-all duration-100 text-xs font-semibold bg-transparent border-none cursor-pointer"
               onClick={() =>
                 onShowUtilityDialog(
@@ -30,6 +31,7 @@ export default function Footer({ onSelectTab, onShowUtilityDialog }: FooterProps
               Crossword Solver
             </button>
             <button
+              type="button"
               className="text-[#505f76] hover:text-[#004ac6] hover:underline transition-all duration-100 text-xs font-semibold bg-transparent border-none cursor-pointer"
               onClick={() =>
                 onShowUtilityDialog(
@@ -41,6 +43,7 @@ export default function Footer({ onSelectTab, onShowUtilityDialog }: FooterProps
               Scrabble Help
             </button>
             <button
+              type="button"
               className="text-[#505f76] hover:text-[#004ac6] hover:underline transition-all duration-100 text-xs font-semibold bg-transparent border-none cursor-pointer"
               onClick={() =>
                 onShowUtilityDialog(
@@ -58,6 +61,7 @@ export default function Footer({ onSelectTab, onShowUtilityDialog }: FooterProps
         <div className="space-y-3 md:text-right flex flex-col md:items-end justify-end">
           <nav className="flex flex-wrap md:justify-end gap-x-4 gap-y-2">
             <button
+              type="button"
               className="text-[#505f76] hover:text-[#004ac6] hover:underline transition-all duration-100 text-xs font-semibold bg-transparent border-none cursor-pointer"
               onClick={() =>
                 onShowUtilityDialog(
@@ -69,6 +73,7 @@ export default function Footer({ onSelectTab, onShowUtilityDialog }: FooterProps
               Privacy Policy
             </button>
             <button
+              type="button"
               className="text-[#505f76] hover:text-[#004ac6] hover:underline transition-all duration-100 text-xs font-semibold bg-transparent border-none cursor-pointer"
               onClick={() =>
                 onShowUtilityDialog(
@@ -80,6 +85,7 @@ export default function Footer({ onSelectTab, onShowUtilityDialog }: FooterProps
               Terms of Service
             </button>
             <button
+              type="button"
               className="text-[#505f76] hover:text-[#004ac6] hover:underline transition-all duration-100 text-xs font-semibold bg-transparent border-none cursor-pointer"
               onClick={() =>
                 onShowUtilityDialog(
