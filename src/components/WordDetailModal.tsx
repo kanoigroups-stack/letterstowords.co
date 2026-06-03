@@ -85,6 +85,7 @@ export default function WordDetailModal({
             <h3 className="font-bold text-lg tracking-tight uppercase font-mono">Word Details</h3>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="text-white/80 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors cursor-pointer"
           >
@@ -138,6 +139,7 @@ export default function WordDetailModal({
             </p>
             <div className="grid grid-cols-2 gap-3">
               <button
+                type="button"
                 onClick={() => {
                   onSearchAnagrams(word);
                   onClose();
@@ -148,6 +150,7 @@ export default function WordDetailModal({
                 <span>Find Anagrams</span>
               </button>
               <button
+                type="button"
                 onClick={() => {
                   onSearchDictionary(word);
                   onClose();
@@ -165,6 +168,7 @@ export default function WordDetailModal({
         {/* Footer */}
         <div className="bg-slate-50 px-6 py-3 border-t border-slate-100 text-center">
           <button
+            type="button"
             onClick={onClose}
             className="text-xs text-slate-500 hover:text-[#004ac6] font-semibold cursor-pointer bg-transparent border-none"
           >
