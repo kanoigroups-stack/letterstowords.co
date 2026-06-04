@@ -84,18 +84,15 @@ export default function Footer({ onSelectTab, onShowUtilityDialog }: FooterProps
             >
               Terms of Service
             </button>
-            <button
-              type="button"
-              className="text-[#505f76] hover:text-[#004ac6] hover:underline transition-all duration-100 text-xs font-semibold bg-transparent border-none cursor-pointer"
-              onClick={() =>
-                onShowUtilityDialog(
-                  'Sitemap',
-                  'This platform contains primary sections: Unscrambler (Home), Dictionary (Word details lookup), Descrambler (Multi letter pool solvers), Anagrams (Perfect anagram locator), Wordle (Interactive Helper & built-in Game), and Random (daily scramble and training).'
-                )
-              }
+            {/* BUG FIX #8: Sitemap now links to actual sitemap.xml file instead of showing a dialog */}
+            <a
+              href="/sitemap.xml"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#505f76] hover:text-[#004ac6] hover:underline transition-all duration-100 text-xs font-semibold cursor-pointer"
             >
               Sitemap
-            </button>
+            </a>
           </nav>
           <p className="text-xs text-[#505f76]">
             © {currentYear} Letters to Words. All rights reserved. Made in beautiful high-contrast slate layout.
