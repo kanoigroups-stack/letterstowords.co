@@ -86,8 +86,14 @@ export default function DictionaryTab({
     }
 
     // 2. Fetch from External Public Dictionary API
-    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${targetWord.toLowerCase()}`)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+    fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${targetWord.toLowerCase()}`, {
+      signal: controller.signal
+    })
       .then((res) => {
+        clearTimeout(timeoutId);
         if (!res.ok) throw new Error('Not found');
         return res.json();
       })
@@ -99,6 +105,7 @@ export default function DictionaryTab({
       })
       .catch(() => {
         setActiveTab('local'); // Fallback to local if dictionary API fails or offline
+        setErrorMsg('Online dictionary unavailable. Showing local results.');
       })
       .finally(() => {
         setIsLoading(false);
@@ -154,6 +161,13 @@ export default function DictionaryTab({
         <div className="flex items-center justify-center p-8 max-w-2xl mx-auto space-x-2">
           <div className="animate-spin h-6 w-6 border-2 border-[#004ac6] border-t-transparent rounded-full" />
           <span className="text-[#505f76] font-medium text-sm">Querying dictionary systems...</span>
+        </div>
+      )}
+
+      {/* Error Message */}
+      {errorMsg && !isLoading && (
+        <div className="max-w-2xl mx-auto text-center py-2 text-xs text-orange-600 bg-orange-50 rounded-lg border border-orange-200">
+          {errorMsg}
         </div>
       )}
 
@@ -288,19 +302,24 @@ export default function DictionaryTab({
                             </p>
                           )}
 
+                          {/* BUG FIX #4: Synonym click now properly updates searchTerm and triggers search */}
                           {def.synonyms && def.synonyms.length > 0 && (
                             <div className="pl-5 flex flex-wrap gap-1.5 items-center">
                               <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider">
                                 Synonyms:
                               </span>
                               {def.synonyms.slice(0, 4).map((syn, synIdx) => (
-                                <span
+                                <button
                                   key={synIdx}
-                                  onClick={() => handleSearch(syn)}
-                                  className="text-[11px] text-[#004ac6] hover:underline cursor-pointer bg-slate-50 px-1.5 py-0.5 rounded font-medium"
+                                  type="button"
+                                  onClick={() => {
+                                    setSearchTerm(syn);
+                                    handleSearch(syn);
+                                  }}
+                                  className="text-[11px] text-[#004ac6] hover:underline cursor-pointer bg-slate-50 px-1.5 py-0.5 rounded font-medium border border-transparent hover:border-[#004ac6] transition-colors"
                                 >
                                   {syn}
-                                </span>
+                                </button>
                               ))}
                             </div>
                           )}
