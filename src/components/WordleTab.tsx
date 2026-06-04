@@ -148,6 +148,27 @@ export default function WordleTab({ onWordClick }: WordleTabProps) {
     }
   };
 
+  // BUG FIX #5: Physical keyboard support
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (mode !== 'game' || gameStatus !== 'IN_PROGRESS') return;
+      const key = e.key.toUpperCase();
+      if (key === 'ENTER') {
+        e.preventDefault();
+        handleGameKeyPress('ENTER');
+      } else if (key === 'BACKSPACE' || key === 'DELETE') {
+        e.preventDefault();
+        handleGameKeyPress('BACKSPACE');
+      } else if (/^[A-Z]$/.test(key)) {
+        e.preventDefault();
+        handleGameKeyPress(key);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [mode, gameStatus, currentInput, gameGuesses, gameSolution]);
+
   // Setup Keyboard click colors based on played tries
   const getLetterKeyStyle = (char: string): string => {
     const uppercaseChar = char.toUpperCase();
