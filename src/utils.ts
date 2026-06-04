@@ -133,7 +133,7 @@ export function solveAnagram(inputWord: string): string[] {
   return matched;
 }
 
-// Wordle Solver Assistant
+// BUG FIX #6: Wordle Solver Assistant - Fixed duplicate letter handling
 export function solveWordle(
   green: string[],
   yellow: string[][], // index 0-4: letters that cannot be in this position but ARE in the word
@@ -154,16 +154,46 @@ export function solveWordle(
       }
     }
 
-    // Check Gray list (exclude letters not in word)
+    // BUG FIX #6: Improved Gray handling for duplicate letters
+    // Count how many of each letter are "green" (confirmed exact positions)
+    const greenLetterCounts: { [char: string]: number } = {};
+    for (let i = 0; i < 5; i++) {
+      if (green[i] && green[i].trim() !== '') {
+        const letter = green[i].toUpperCase();
+        greenLetterCounts[letter] = (greenLetterCounts[letter] || 0) + 1;
+      }
+    }
+
+    // Check Gray list - but allow letters that appear as green elsewhere
     for (let i = 0; i < 5; i++) {
       const letter = word[i];
       if (graySet.has(letter)) {
-        // Allow if this letter is green in this exact position
+        // Count total occurrences of this letter in the word
+        const totalInWord = word.split('').filter(c => c === letter).length;
+        // Count how many are confirmed green for this letter
+        const greenCount = greenLetterCounts[letter] || 0;
+        // Count how many are confirmed yellow for this letter
+        let yellowCount = 0;
+        for (let j = 0; j < 5; j++) {
+          if (word[j] === letter && yellow[j] && yellow[j].includes(letter)) {
+            yellowCount++;
+          }
+        }
+        
+        // If the word has MORE of this letter than green positions confirm,
+        // and this letter is gray, reject it
+        // But if this exact position is green, allow it
         if (green[i] === letter) continue;
-        // Allow if this letter is green somewhere else (duplicate letter case)
-        const isGreenElsewhere = green.some((g, idx) => g === letter && word[idx] === letter);
-        if (isGreenElsewhere) continue;
-        return false;
+        
+        // Calculate minimum required occurrences from yellow clues
+        const requiredFromYellow = Array.from(mustHaveYellow).filter(y => y === letter).length > 0 ? 1 : 0;
+        const minimumRequired = greenCount + requiredFromYellow;
+        
+        // If word has more of this letter than minimum required, and it's gray, reject
+        const wordLetterCount = word.split('').filter(c => c === letter).length;
+        if (wordLetterCount > minimumRequired) {
+          return false;
+        }
       }
     }
 
@@ -180,6 +210,28 @@ export function solveWordle(
       const letter = word[i];
       if (yellow[i] && yellow[i].includes(letter)) {
         return false;
+      }
+    }
+
+    // BUG FIX #6: Additional check - ensure yellow letters aren't ONLY in green positions
+    // (they must appear at least once in a non-green, non-yellow-forbidden position)
+    for (const yellowLetter of mustHaveYellow) {
+      let foundValidPosition = false;
+      for (let i = 0; i < 5; i++) {
+        if (word[i] === yellowLetter && green[i] !== yellowLetter && (!yellow[i] || !yellow[i].includes(yellowLetter))) {
+          foundValidPosition = true;
+          break;
+        }
+      }
+      // If yellow letter only appears in green positions, that's wrong
+      // (unless there are multiple occurrences)
+      if (!foundValidPosition) {
+        // Check if there are multiple occurrences in the word
+        const occurrences = word.split('').filter(c => c === yellowLetter).length;
+        const greenOccurrences = green.filter(g => g === yellowLetter).length;
+        if (occurrences <= greenOccurrences) {
+          return false;
+        }
       }
     }
 
